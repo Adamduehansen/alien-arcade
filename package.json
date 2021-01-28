@@ -1,0 +1,17 @@
+{
+  "name": "alien-arcade",
+  "private": true,
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adamduehansen/alien-arcade.git"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Adam"
+  },
+  "bugs": {
+    "url": "https://github.com/Adamduehansen/alien-arcade/issues"
+  },
+  "homepage": "https://github.com/Adamduehansen/alien-arcade#readme"
+}
