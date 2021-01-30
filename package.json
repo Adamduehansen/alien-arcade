@@ -1,17 +1,25 @@
 {
   "name": "alien-arcade",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint ."
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Adamduehansen/alien-arcade.git"
   },
-  "keywords": [],
   "author": {
     "name": "Adam"
   },
   "bugs": {
     "url": "https://github.com/Adamduehansen/alien-arcade/issues"
   },
-  "homepage": "https://github.com/Adamduehansen/alien-arcade#readme"
+  "homepage": "https://github.com/Adamduehansen/alien-arcade#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.14.1",
+    "@typescript-eslint/parser": "^4.14.1",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "typescript": "^4.1.3"
+  }
 }
