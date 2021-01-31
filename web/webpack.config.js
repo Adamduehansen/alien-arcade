@@ -3,8 +3,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'production',
-  context: path.resolve(__dirname, 'src'),
-  entry: './index.ts',
+  entry: path.resolve(__dirname, 'index.ts'),
   module: {
     rules: [
       {
@@ -21,5 +20,9 @@ module.exports = {
     path: path.resolve(__dirname, 'build'),
     filename: 'game.js',
   },
-  plugins: [new HtmlWebpackPlugin()],
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'index.html'),
+    }),
+  ],
 };
