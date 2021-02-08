@@ -25,4 +25,7 @@ module.exports = {
       template: path.resolve(__dirname, 'index.html'),
     }),
   ],
+  devServer: {
+    open: true,
+  },
 };
