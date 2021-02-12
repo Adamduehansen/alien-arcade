@@ -1,7 +1,7 @@
 import { makeSprite, t } from '@replay/core';
 import { WebInputs } from '@replay/web';
 import { Background } from './Background';
-import { MenuButton, Props as MenuProps } from './MenuButton';
+import { MenuButton } from './MenuButton';
 
 interface State {
   titleScale: number;
@@ -9,7 +9,12 @@ interface State {
   selectedMenuButton: 'Play' | 'Leaderboard';
 }
 
-export const Menu = makeSprite<Record<string, unknown>, State, WebInputs>({
+interface Props {
+  onPlay: () => void;
+  onLeaderboard: () => void;
+}
+
+export const Menu = makeSprite<Props, State, WebInputs>({
   init: function () {
     return {
       titleScale: 5,
@@ -17,7 +22,7 @@ export const Menu = makeSprite<Record<string, unknown>, State, WebInputs>({
       selectedMenuButton: 'Play',
     };
   },
-  loop: function ({ state, device }) {
+  loop: function ({ props, state, device }) {
     let { titleScale, titleScaleDirection, selectedMenuButton } = state;
 
     switch (titleScaleDirection) {
@@ -41,6 +46,14 @@ export const Menu = makeSprite<Record<string, unknown>, State, WebInputs>({
       selectedMenuButton = 'Play';
     }
 
+    if (device.inputs.keysJustPressed['Enter']) {
+      if (selectedMenuButton === 'Play') {
+        props.onPlay();
+      } else if (selectedMenuButton === 'Leaderboard') {
+        props.onLeaderboard();
+      }
+    }
+
     return {
       titleScale,
       titleScaleDirection,
@@ -48,8 +61,6 @@ export const Menu = makeSprite<Record<string, unknown>, State, WebInputs>({
     };
   },
   render: function ({ state, device }) {
-    const buttons = [];
-
     return [
       Background({
         id: 'Background',

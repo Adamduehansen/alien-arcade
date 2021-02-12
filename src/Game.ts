@@ -1,4 +1,5 @@
 import { GameProps, makeSprite } from '@replay/core';
+import { Level } from './Level';
 import { Menu } from './Menu';
 
 type Screen = 'Menu' | 'Level';
@@ -21,11 +22,29 @@ export const Game = makeSprite<GameProps, GameState>({
       screen: 'Menu',
     };
   },
-  render: function () {
+  render: function ({ state, updateState }) {
     return [
-      Menu({
-        id: 'Menu',
-      }),
+      state.screen === 'Menu'
+        ? Menu({
+            id: 'Menu',
+            onPlay: () => {
+              updateState((state) => {
+                return {
+                  ...state,
+                  screen: 'Level',
+                };
+              });
+            },
+            onLeaderboard: () => {
+              console.log('Going to leaderboard');
+            },
+          })
+        : null,
+      state.screen === 'Level'
+        ? Level({
+            id: 'Level',
+          })
+        : null,
     ];
   },
 });

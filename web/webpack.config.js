@@ -1,5 +1,7 @@
 const path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -21,8 +23,16 @@ module.exports = {
     filename: 'game.js',
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'index.html'),
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, '..', 'assets'),
+        },
+      ],
     }),
   ],
   devServer: {
