@@ -81,6 +81,7 @@ export const Level = makeSprite<Record<string, unknown>, State, WebInputs>({
     }
 
     let { speed, direction, rockets } = state;
+    const { player } = state;
     const { inputs } = device;
 
     if (
@@ -136,10 +137,21 @@ export const Level = makeSprite<Record<string, unknown>, State, WebInputs>({
 
     if (speed) {
       const { speedX, speedY } = getSpeedDirection(direction, speed);
-      state.player.y += speedY;
-      state.player.x += speedX;
+      player.y += speedY;
+      player.x += speedX;
     } else {
       direction = Direction.NoWhere;
+    }
+
+    // Keep player inside the bounds of the game screen.
+    if (player.x < -device.size.width / 2) {
+      player.x = -device.size.width / 2;
+    } else if (player.x > device.size.width / 2) {
+      player.x = device.size.width / 2;
+    } else if (player.y < -device.size.height / 2) {
+      player.y = -device.size.height / 2;
+    } else if (player.y > device.size.height / 2) {
+      player.y = device.size.height / 2;
     }
 
     // Spawn rocket
@@ -147,8 +159,8 @@ export const Level = makeSprite<Record<string, unknown>, State, WebInputs>({
       rockets = [
         ...rockets,
         {
-          x: state.player.x,
-          y: state.player.y,
+          x: player.x,
+          y: player.y,
         },
       ];
     }
