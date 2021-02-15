@@ -10,12 +10,17 @@ enum Direction {
   Left = 8,
 }
 
+interface Position {
+  x: number;
+  y: number;
+}
+
 interface State {
-  xPosition: number;
-  yPosition: number;
+  player: Position;
   speed: number;
   direction: Direction;
   loaded: boolean;
+  rockets: Array<Position>;
 }
 
 const MAX_SPEED = 5;
@@ -60,11 +65,14 @@ export const Level = makeSprite<Record<string, unknown>, State, WebInputs>({
     });
 
     return {
-      xPosition: 0,
-      yPosition: 0,
+      player: {
+        x: 0,
+        y: 0,
+      },
       speed: 0,
       direction: Direction.NoWhere,
       loaded: false,
+      rockets: [],
     };
   },
   loop: function ({ state, device }) {
@@ -72,8 +80,7 @@ export const Level = makeSprite<Record<string, unknown>, State, WebInputs>({
       return { ...state };
     }
 
-    let { xPosition, yPosition, speed, direction } = state;
-
+    let { speed, direction, rockets } = state;
     const { inputs } = device;
 
     if (
@@ -95,52 +102,73 @@ export const Level = makeSprite<Record<string, unknown>, State, WebInputs>({
       }
     }
 
-    const keysDown = Object.keys(inputs.keysDown);
-
-    if (keysDown.includes('ArrowUp')) {
+    if (inputs.keysDown['ArrowUp']) {
       direction = Direction.Up;
     }
 
-    if (keysDown.includes('ArrowDown')) {
+    if (inputs.keysDown['ArrowDown']) {
       direction = Direction.Down;
     }
 
-    if (keysDown.includes('ArrowLeft')) {
+    if (inputs.keysDown['ArrowLeft']) {
       direction = Direction.Left;
     }
 
-    if (keysDown.includes('ArrowRight')) {
+    if (inputs.keysDown['ArrowRight']) {
       direction = Direction.Right;
     }
 
-    if (keysDown.includes('ArrowUp') && keysDown.includes('ArrowRight')) {
+    if (inputs.keysDown['ArrowUp'] && inputs.keysDown['ArrowRight']) {
       direction = Direction.Up | Direction.Right;
     }
 
-    if (keysDown.includes('ArrowUp') && keysDown.includes('ArrowLeft')) {
+    if (inputs.keysDown['ArrowUp'] && inputs.keysDown['ArrowLeft']) {
       direction = Direction.Up | Direction.Left;
     }
 
-    if (keysDown.includes('ArrowDown') && keysDown.includes('ArrowLeft')) {
+    if (inputs.keysDown['ArrowDown'] && inputs.keysDown['ArrowLeft']) {
       direction = Direction.Down | Direction.Left;
     }
 
-    if (keysDown.includes('ArrowDown') && keysDown.includes('ArrowRight')) {
+    if (inputs.keysDown['ArrowDown'] && inputs.keysDown['ArrowRight']) {
       direction = Direction.Down | Direction.Right;
     }
 
     if (speed) {
       const { speedX, speedY } = getSpeedDirection(direction, speed);
-      yPosition += speedY;
-      xPosition += speedX;
+      state.player.y += speedY;
+      state.player.x += speedX;
     } else {
       direction = Direction.NoWhere;
     }
 
+    // Spawn rocket
+    if (inputs.keysJustPressed[' ']) {
+      rockets = [
+        ...rockets,
+        {
+          x: state.player.x,
+          y: state.player.y,
+        },
+      ];
+    }
+
+    // Update rocket positions.
+    rockets = rockets.map(({ x, y }) => {
+      return {
+        x: x,
+        y: y + 10,
+      };
+    });
+
+    // Clear out-of-bounds rockets
+    rockets = rockets.filter(({ y }) => {
+      return y < device.size.height / 2;
+    });
+
     return {
       ...state,
-      xPosition,
-      yPosition,
+      rockets,
       speed,
       direction,
     };
@@ -161,12 +189,21 @@ export const Level = makeSprite<Record<string, unknown>, State, WebInputs>({
         Background({
           id: 'Background',
         }),
+        ...state.rockets.map((position) => {
+          return t.rectangle({
+            color: 'red',
+            width: 10,
+            height: 10,
+            x: position.x,
+            y: position.y,
+          });
+        }),
         t.image({
           fileName: 'Spaceship_16x16.png',
           height: 50,
           width: 50,
-          y: state.yPosition,
-          x: state.xPosition,
+          x: state.player.x,
+          y: state.player.y,
         }),
       ];
     }
